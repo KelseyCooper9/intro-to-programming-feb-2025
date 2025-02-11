@@ -3,7 +3,7 @@
 public class Formatters
 {
     // method that takes 2 strings and returns a string 
-    public static string FormatName(string firstName, string lastName)
+    public string FormatName(string firstName, string lastName)
     {
         return  $"{lastName} {firstName}";
     }
