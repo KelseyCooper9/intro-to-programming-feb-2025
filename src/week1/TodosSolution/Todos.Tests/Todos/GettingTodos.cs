@@ -44,8 +44,19 @@ public class GettingTodos
 
         Assert.NotNull(listofTodos);
 
-        var hasMyItem =listofTodos.Any(item => item.Description == itemToAdd.Description);
+        //var hasMyItem =listofTodos.Any(item => item.Description == itemToAdd.Description);
+        //fewer elements 
+        bool found = false;
 
-        Assert.True(hasMyItem);
+        foreach (TodoListItem v in listofTodos)
+        {
+            if (v.Description == itemToAdd.Description)
+            {
+                found = true;
+                break;
+            }
+        }
+
+        Assert.True(found);
     }
 }
