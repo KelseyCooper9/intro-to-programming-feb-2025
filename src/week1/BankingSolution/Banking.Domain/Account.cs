@@ -1,21 +1,25 @@
-﻿
-namespace Banking.Domain;
+﻿namespace Banking.Domain;
 
-public class Account //type of thing, an instance of that type of thing//need to instantiate with New ""() keyword
+
+public class Account
 {
-    private decimal _currentBalance = 5000; //automatically private by default
-    
+    private decimal _currentBalance = 5000;
+
+    // Queries (methods where we ask for stuff)
     public decimal GetBalance()
     {
         return _currentBalance;
     }
     public void Deposit(decimal amountToDeposit)
     {
-            _currentBalance += amountToDeposit;
+        CheckTransactionAmount(amountToDeposit);
+        _currentBalance += amountToDeposit;
     }
 
+    // Commands - telling our account to do some work.
     public void Withdraw(decimal amountToWithdraw)
     {
+        CheckTransactionAmount(amountToWithdraw);
         if (_currentBalance >= amountToWithdraw)
         {
             _currentBalance -= amountToWithdraw;
@@ -24,6 +28,15 @@ public class Account //type of thing, an instance of that type of thing//need to
         {
             throw new AccountOverdraftException();
         }
+
+    }
+
+    // Helpers, etc. extracted from the above.
+    private void CheckTransactionAmount(decimal amount)
+    {
+        if (amount < 0)
+        {
+            throw new AccountNegativeTransactionAmountException();
+        }
     }
 }
-//ctrl k ctrl d to reformat 
