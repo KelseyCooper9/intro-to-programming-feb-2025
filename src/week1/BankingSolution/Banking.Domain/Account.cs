@@ -4,14 +4,20 @@
 public class Account
 {
     private decimal _currentBalance = 5000;
+    public bool IsGoldAccount = false;
 
     // Queries (methods where we ask for stuff)
     public decimal GetBalance()
     {
         return _currentBalance;
     }
-    public void Deposit(decimal amountToDeposit)
+    public void Deposit(decimal amountToDeposit, bool isGoldAccount = false)
     {
+        var bonus = 0M;
+        if (isGoldAccount)
+        {
+            bonus = amountToDeposit + 20M;
+        }
         CheckTransactionAmount(amountToDeposit);
         _currentBalance += amountToDeposit;
     }
