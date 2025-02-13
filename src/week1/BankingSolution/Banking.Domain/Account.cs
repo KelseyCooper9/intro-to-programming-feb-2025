@@ -30,7 +30,7 @@ public class Account
         }
 
     }
-
+    //private methods should only support public methods- do not test private methods
     // Helpers, etc. extracted from the above.
     private void CheckTransactionAmount(decimal amount)
     {
