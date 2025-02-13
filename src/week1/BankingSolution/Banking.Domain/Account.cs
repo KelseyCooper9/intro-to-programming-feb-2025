@@ -10,7 +10,7 @@ public class Account
     {
         return _currentBalance;
     }
-    public void Deposit(decimal amountToDeposit)
+    public virtual void Deposit(decimal amountToDeposit)
     {
         CheckTransactionAmount(amountToDeposit);
         _currentBalance += amountToDeposit;
