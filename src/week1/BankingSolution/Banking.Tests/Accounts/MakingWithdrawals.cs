@@ -1,4 +1,5 @@
 ﻿using Banking.Domain;
+using Banking.Tests.TestDoubles;
 
 namespace Banking.Tests.Accounts;
 public class MakingWithdrawals
@@ -9,7 +10,7 @@ public class MakingWithdrawals
     [InlineData(3.23)]
     public void MakingWithdrawalsDecreasesTheBalance(decimal amountToWithdraw)
     {
-        var account = new Account();
+        var account = new Account(new DummyBonusCalculator());
         var openingBalance = account.GetBalance();
 
 
@@ -23,7 +24,7 @@ public class MakingWithdrawals
     public void CannotMakeWithdrawalWithNegativeNumbers()
     {
 
-        var account = new Account();
+        var account = new Account(new DummyBonusCalculator());
         Assert.Throws<AccountNegativeTransactionAmountException>(() => account.Withdraw(-3));
 
 
@@ -33,7 +34,7 @@ public class MakingWithdrawals
     [Fact]
     public void CanWithdrawFullBalance()
     {
-        var account = new Account();
+        var account = new Account(new DummyBonusCalculator());
 
         account.Withdraw(account.GetBalance());
 
@@ -44,7 +45,7 @@ public class MakingWithdrawals
     public void WhenOverdraftBalanceIsNotReducedNotAllowed()
     {
 
-        var account = new Account();
+        var account = new Account( new DummyBonusCalculator());
         var openingBalance = account.GetBalance();
         var amountThatRepresentsMoreThanTheCurrentBalance = openingBalance + .01M;
 
@@ -63,7 +64,7 @@ public class MakingWithdrawals
     [Fact]
     public void WhenOverdraftMethodThrows()
     {
-        var account = new Account();
+        var account = new Account(new DummyBonusCalculator());
         var openingBalance = account.GetBalance();
         var amountThatRepresentsMoreThanTheCurrentBalance = openingBalance + .01M;
         //var exceptionThrow = false;

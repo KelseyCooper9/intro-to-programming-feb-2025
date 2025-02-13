@@ -1,22 +1,26 @@
 ﻿
+
 using Banking.Domain;
+using Banking.Tests.TestDoubles;
+using NSubstitute;
 
 namespace Banking.Tests.Accounts;
 public class NewAccounts
 {
     [Fact]
-    public void BalanceIscorrect()
+    public void BalanceIsCorrect()
     {
         var correctOpeningBalance = 5000M;
-        //"Write the Code you wish you had"- More Corey Haines Wisdom
-        var myAccount = new Account();  //ctrl key period
-        var yourAccount = new Account();
+        // "Write the Code You Wish You Had" - More Corey Haines Wisdom
+        var myAccount = new Account(Substitute.For<ICalculateBonusesForDepositsOnAccounts>());
+        var yourAccount = new Account(Substitute.For<ICalculateBonusesForDepositsOnAccounts>());
 
         var myBalance = myAccount.GetBalance();
         decimal yourBalance = yourAccount.GetBalance();
 
         Assert.Equal(correctOpeningBalance, myBalance);
         Assert.Equal(correctOpeningBalance, yourBalance);
-        //make sure it fails on an assert initially
+
+
     }
 }
