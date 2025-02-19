@@ -14,6 +14,7 @@ export class ResourceDataService {
   addResource(item: ResourceListItemCreateModel) {
     // item.tags = string
     // item.tags = string[] "dog cat mouse mouse" -> ["dog", "cat", "mouse"]
+    const itemToSend = {};
     return this.client.post<ResourceListItem>(this.URL + 'resources', item);
   }
 }
