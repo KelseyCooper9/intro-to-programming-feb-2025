@@ -1,6 +1,17 @@
-@Resources.Api_HostAddress = http://localhost: 1338
+@Resources.Api_HostAddress = http://localhost:1338
 
 GET {{Resources.Api_HostAddress}}/resources
 Accept: application/json
 
 ###
+
+POST {{Resources.Api_HostAddress}}/resources
+Content-Type: application/json
+
+{
+  "title": "Mozilla Developer Network",
+  "description": "The Web Stuff",
+  "link": "https://mdn.com",
+  "linkText": "MDN",
+  "tags": ["HTML", "CSS", "JAVASCRIPT"]
+}
