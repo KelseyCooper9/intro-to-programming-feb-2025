@@ -1,32 +1,53 @@
-var builder = WebApplication.CreateBuilder(args);
+using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
+using Resources.Api.resources;
 
-// Add services to the container.
+namespace Resources.Api.Resources;
 
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 
-builder.Services.AddCors(options =>
+// Get a 200 Ok when you do a GET /resources
+public class Api(IValidator<ResourceListItemCreateModel> validator) : ControllerBase
 {
-    options.AddDefaultPolicy(pol =>
+
+    [HttpGet("/resources")]
+    public async Task<ActionResult> GetAllResources()
     {
-        pol.AllowAnyHeader();
-        pol.WithMethods();
-        pol.AllowAnyOrigin();
-    });
-});
+        var fakeData = new List<ResourceListItemModel>()
+    {
+        new ResourceListItemModel()
+        {
+          Id = Guid.NewGuid(),
+          Title = "Learn .NET",
+          Description = "Microsoft's .NET Educational Site",
+          CreatedBy = "bob@aol.com",
+          CreatedOn = DateTime.Now,
+          Link = "https://dotnet.microsoft.com/en-us/learn",
+          Tags = [".NET","Microsoft", "APIS"]
+        }
+    };
+        return Ok(fakeData);
+    }
 
-var app = builder.Build();
-app.UseCors();
+    [HttpPost("/resources")]
+    public async Task<ActionResult> AddResourceItem([FromBody] ResourceListItemCreateModel request)
+    {
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
+        var validations = await validator.ValidateAsync(request);
+
+        if (validations.IsValid == false)
+        {
+            return BadRequest(validations.ToDictionary()); // more on that later.
+        }
+        var fakeResponse = new ResourceListItemModel
+        {
+            ID = Guid.NewGuid(),
+            Title = request.Title,
+            Description = request.Description,
+            CreatedBy = "sue@aol.com", // ??
+            CreatedOn = DateTime.Now,
+            Link = request.Link,
+            Tags = request.Tags,
+        };
+        return Ok(fakeResponse);
+    }
 }
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
