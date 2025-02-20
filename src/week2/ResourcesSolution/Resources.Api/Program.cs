@@ -1,53 +1,45 @@
 using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
+using Marten;
 using Resources.Api.resources;
 
-namespace Resources.Api.Resources;
+var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container.
 
-// Get a 200 Ok when you do a GET /resources
-public class Api(IValidator<ResourceListItemCreateModel> validator) : ControllerBase
+builder.Services.AddControllers();
+// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddOpenApi();
+
+builder.Services.AddCors(options =>
 {
-
-    [HttpGet("/resources")]
-    public async Task<ActionResult> GetAllResources()
+    // classroom demonstration - probably ok, but check with your local authorities. ;)
+    options.AddDefaultPolicy(pol =>
     {
-        var fakeData = new List<ResourceListItemModel>()
-    {
-        new ResourceListItemModel()
-        {
-          Id = Guid.NewGuid(),
-          Title = "Learn .NET",
-          Description = "Microsoft's .NET Educational Site",
-          CreatedBy = "bob@aol.com",
-          CreatedOn = DateTime.Now,
-          Link = "https://dotnet.microsoft.com/en-us/learn",
-          Tags = [".NET","Microsoft", "APIS"]
-        }
-    };
-        return Ok(fakeData);
-    }
+        pol.AllowAnyHeader();
+        pol.WithMethods();
+        pol.AllowAnyOrigin();
+    });
+});
 
-    [HttpPost("/resources")]
-    public async Task<ActionResult> AddResourceItem([FromBody] ResourceListItemCreateModel request)
-    {
+builder.Services.AddScoped<IValidator<ResourceListItemCreateModel>, ResourceListItemCreateModelValidations>();
 
-        var validations = await validator.ValidateAsync(request);
+var connectionString = builder.Configuration.GetConnectionString("resources") ?? throw new Exception("No Connection String Found! Bailing!");
+builder.Services.AddMarten(options =>
+{
+    options.Connection(connectionString);
+}).UseLightweightSessions();
+var app = builder.Build();
 
-        if (validations.IsValid == false)
-        {
-            return BadRequest(validations.ToDictionary()); // more on that later.
-        }
-        var fakeResponse = new ResourceListItemModel
-        {
-            ID = Guid.NewGuid(),
-            Title = request.Title,
-            Description = request.Description,
-            CreatedBy = "sue@aol.com", // ??
-            CreatedOn = DateTime.Now,
-            Link = request.Link,
-            Tags = request.Tags,
-        };
-        return Ok(fakeResponse);
-    }
+app.UseCors();
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
 }
+
+app.UseAuthorization();
+
+// This uses "reflection" to scan our entire project and create the route table based on attributes.
+app.MapControllers();
+
+app.Run();
